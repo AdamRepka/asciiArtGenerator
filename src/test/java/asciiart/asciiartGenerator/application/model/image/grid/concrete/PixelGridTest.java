@@ -17,6 +17,9 @@ class PixelGridTest {
 
     @Test
     void getWidth() {
+        for (int i = 0; i < 256; i++) {
+            System.out.println(i);
+        }
         assertEquals(charPixelGrid.getWidth(), 3);
         assertEquals(rgbPixelGrid.getWidth(), 3);
         assertEquals(greyScalePixelGrid.getWidth(), 3);
