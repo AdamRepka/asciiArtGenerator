@@ -27,5 +27,5 @@ public class RGBImageCharImageTransformer implements ImageTransformer<RGBImage, 
                         .map(line -> line.stream()
                                 .map(rgbPixel -> new CharPixel(greyScaleToCharMapper.getCharacter(rgbToGreyScaleMapper.getGreyScale(rgbPixel))))
                                 .collect(Collectors.toList())).collect(Collectors.toList())));
-    }// Napad jak projit obrazek jen jednou a rovnou exportovat - kvuli rychlosti
+    }
 }

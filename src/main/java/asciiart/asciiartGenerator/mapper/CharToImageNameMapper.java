@@ -68,7 +68,7 @@ public class CharToImageNameMapper {
         map.put('"', "quote");
         map.put('^', "power");
         map.put('`', "exant");
-        map.put('\'', "single)quote");
+        map.put('\'', "single_quote");
         map.put('.', "dot");
         map.put(' ', "empty");
     }
