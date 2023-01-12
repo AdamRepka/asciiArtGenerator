@@ -4,13 +4,14 @@ import asciiart.asciiartGenerator.application.model.image.grid.pixel.concrete.Gr
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
-public record GreyScalePixelGrid(Iterable<Iterable<GreyScalePixel>> greyPixels) implements PixelGrid<GreyScalePixel> {
+public record GreyScalePixelGrid(List<List<GreyScalePixel>> greyPixels) implements PixelGrid<GreyScalePixel> {
     /**
      * @return 2D collection of Pixels
      */
     @Override
-    public Iterable<Iterable<GreyScalePixel>> getPixels() {
+    public List<List<GreyScalePixel>> getPixels() {
         return greyPixels();
     }
 
@@ -19,7 +20,7 @@ public record GreyScalePixelGrid(Iterable<Iterable<GreyScalePixel>> greyPixels) 
      */
     @Override
     public int getWidth() {
-        return greyPixels().iterator().hasNext() ? ((Collection<?>) greyPixels().iterator().next()).size() : 0;
+        return greyPixels().isEmpty() ? 0 : greyPixels().get(0).size();
     }
 
     /**
@@ -27,7 +28,7 @@ public record GreyScalePixelGrid(Iterable<Iterable<GreyScalePixel>> greyPixels) 
      */
     @Override
     public int getHeight() {
-        return ((Collection<?>) greyPixels()).size();
+        return greyPixels().size();
     }
 
     /**
@@ -37,15 +38,18 @@ public record GreyScalePixelGrid(Iterable<Iterable<GreyScalePixel>> greyPixels) 
      */
     @Override
     public GreyScalePixel getPixel(Long x, Long y) {
-        int i = 0, j = 0;
-        for (Iterator<Iterable<GreyScalePixel>> it = getPixels().iterator(); it.hasNext(); i++) {
-            if (i == y) {
-                for (Iterator<GreyScalePixel> it1 = it.next().iterator(); it1.hasNext(); j++) {
-                    if (j == x) return it1.next();
-                    else it1.next();
-                }
-            } else it.next();
+        if (x < getWidth() && y < getHeight()) {
+            return greyPixels().get(Math.toIntExact(y)).get(Math.toIntExact(x));
         }
-        throw new IllegalArgumentException("Given coordinates are not valid!");
+        else {
+            StringBuilder builder = new StringBuilder();
+            if (x >= getWidth()) {
+                builder.append("Max X coordinate = ").append(getWidth()-1).append(", Current = ").append(x).append("\n");
+            }
+            if (y >= getHeight()) {
+                builder.append("Max Y coordinate = ").append(getHeight()-1).append(", Current = ").append(y).append("\n");
+            }
+            throw new IllegalArgumentException("Wrong coordinates! "+ builder);
+        }
     }
 }

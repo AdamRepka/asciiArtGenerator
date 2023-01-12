@@ -4,13 +4,14 @@ import asciiart.asciiartGenerator.application.model.image.grid.pixel.concrete.RG
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
-public record RGBPixelGrid(Iterable<Iterable<RGBPixel>> rgbPixels) implements PixelGrid<RGBPixel> {
+public record RGBPixelGrid(List<List<RGBPixel>> rgbPixels) implements PixelGrid<RGBPixel> {
     /**
      * @return 2D collection of Pixels
      */
     @Override
-    public Iterable<Iterable<RGBPixel>> getPixels() {
+    public List<List<RGBPixel>> getPixels() {
         return rgbPixels();
     }
 
@@ -19,7 +20,7 @@ public record RGBPixelGrid(Iterable<Iterable<RGBPixel>> rgbPixels) implements Pi
      */
     @Override
     public int getWidth() {
-        return rgbPixels().iterator().hasNext() ? ((Collection<?>) rgbPixels().iterator().next()).size() : 0;
+        return rgbPixels().isEmpty() ? 0 : rgbPixels().get(0).size();
     }
 
     /**
@@ -27,7 +28,7 @@ public record RGBPixelGrid(Iterable<Iterable<RGBPixel>> rgbPixels) implements Pi
      */
     @Override
     public int getHeight() {
-        return ((Collection<?>) rgbPixels()).size();
+        return rgbPixels().size();
     }
 
     /**
@@ -37,15 +38,18 @@ public record RGBPixelGrid(Iterable<Iterable<RGBPixel>> rgbPixels) implements Pi
      */
     @Override
     public RGBPixel getPixel(Long x, Long y) {
-        int i = 0, j = 0;
-        for (Iterator<Iterable<RGBPixel>> it = getPixels().iterator(); it.hasNext(); i++) {
-            if (i == y) {
-                for (Iterator<RGBPixel> it1 = it.next().iterator(); it1.hasNext(); j++) {
-                    if (j == x) return it1.next();
-                    else it1.next();
-                }
-            } else it.next();
+        if (x < getWidth() && y < getHeight()) {
+            return rgbPixels().get(Math.toIntExact(y)).get(Math.toIntExact(x));
         }
-        throw new IllegalArgumentException("Given coordinates are not valid!");
+        else {
+            StringBuilder builder = new StringBuilder();
+            if (x >= getWidth()) {
+                builder.append("Max X coordinate = ").append(getWidth()-1).append(", Current = ").append(x).append("\n");
+            }
+            if (y >= getHeight()) {
+                builder.append("Max Y coordinate = ").append(getHeight()-1).append(", Current = ").append(y).append("\n");
+            }
+            throw new IllegalArgumentException("Wrong coordinates! "+ builder);
+        }
     }
 }
