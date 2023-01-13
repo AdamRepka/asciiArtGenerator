@@ -4,19 +4,17 @@ import asciiart.asciiartGenerator.application.model.image.concrete.CharImage;
 import asciiart.asciiartGenerator.font.FontSize;
 import asciiart.asciiartGenerator.mapper.CharToImageNameMapper;
 import asciiart.asciiartGenerator.transformer.image.ImageTransformer;
-import com.aspose.imaging.*;
-import com.aspose.imaging.fileformats.jpeg.JpegImage;
-import com.aspose.imaging.imageoptions.JpegOptions;
-import com.aspose.imaging.sources.FileCreateSource;
-import com.aspose.imaging.sources.StreamSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class CharImageCharImageFileTransformer implements ImageTransformer<CharImage, JpegImage> {
+public class CharImageCharImageFileTransformer implements ImageTransformer<CharImage, File> {
     CharToImageNameMapper imageNameMapper = new CharToImageNameMapper();
     private final FontSize fontSize;
 
@@ -25,69 +23,75 @@ public class CharImageCharImageFileTransformer implements ImageTransformer<CharI
     }
 
     @Override
-    public JpegImage transform(CharImage image) {
+    public File transform(CharImage image) {
         AtomicInteger i = new AtomicInteger();
-        List<String> lines = image.charPixelGrid().charPixels().stream()
+        AtomicInteger u = new AtomicInteger();
+        List<BufferedImage> lines = image.charPixelGrid().charPixels().stream()
                 .map(line -> {
                     List<String> imagePaths = line.stream()
-                            .map(charPixel -> "C:\\Users\\arepka\\Desktop\\personal\\projekty\\asciiArtGenerator\\src\\main\\resources\\"+imageNameMapper.getImageName(charPixel.value())+".png")
+                            .map(charPixel -> {
+                                System.out.println(charPixel.value()+ " "+ u.getAndIncrement());
+                                return "src/main/resources/" + imageNameMapper.getImageName(charPixel.value()) + ".png";
+
+                            })
                             .toList();
-                    String outputPath = "output-horizontal"+i.getAndIncrement()+".png";
-                    String tempFilePath = "temp.png";
-
-// Get resulting image size
-                    int newWidth = image.charPixelGrid().getWidth() * fontSize.getSize();
-                    int newHeight = fontSize.getSize();
-                    try (JpegOptions options = new JpegOptions()) {
-                        Source tempFileSource = new FileCreateSource(tempFilePath, true);
-                        options.setSource(tempFileSource);
-                        options.setQuality(100);
-
-                        // Create resultant image
-                        try (JpegImage newImage = (JpegImage) Image.create(options, newWidth, newHeight)) {
-                            int stitchedWidth = 0;
-                            for (String imagePath : imagePaths) {
-                                try (RasterImage image1 = (RasterImage) Image.load(imagePath)) {
-                                    Rectangle bounds = new Rectangle(stitchedWidth, 0, image1.getWidth(), image1.getHeight());
-                                    newImage.saveArgb32Pixels(bounds, image1.loadArgb32Pixels(image1.getBounds()));
-                                    stitchedWidth += image1.getWidth();
+                    AtomicReference<BufferedImage> bufferedLine = new AtomicReference<>(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+                    AtomicInteger t = new AtomicInteger();
+                    imagePaths.stream()
+                            .forEach(path -> {
+                                try {
+                                    System.out.println(path+" "+ t.getAndIncrement());
+                                    if(!path.contains("null"))
+                                    bufferedLine.set(joinBufferedImage(bufferedLine.get(), ImageIO.read(new File(path))));
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
                                 }
-                            }
-
-                            // Save output image
-                            newImage.save(outputPath);
-                        }
-                        return outputPath;
-                    }}).toList();
-
-// List of images
-
-// Path of output image
-        String outputPath = "output-vertical.png";
-
-// Get resulting image size
-        int newWidth = image.charPixelGrid().getWidth() * fontSize.getSize();
-        int newHeight = image.charPixelGrid().getHeight() * fontSize.getSize();
-
-// Combine images into new one
-        try (JpegOptions options = new JpegOptions()) {
-            options.setSource(new StreamSource()); // empty
-            options.setQuality(100);
-
-            // Create resultant image
-            try (JpegImage newImage = (JpegImage) Image.create(options, newWidth, newHeight)) {
-                int stitchedHeight = 0;
-                for (String imagePath : lines) {
-                    try (RasterImage image1 = (RasterImage) Image.load(imagePath)) {
-                        Rectangle bounds = new Rectangle(0, stitchedHeight, image1.getWidth(), image1.getHeight());
-                        newImage.saveArgb32Pixels(bounds, image1.loadArgb32Pixels(image1.getBounds()));
-                        stitchedHeight += image1.getHeight();
-                    }
-                }
-                // Save resultant image
-                newImage.save(outputPath);
-                return newImage;
-            }
+                            });
+                    return bufferedLine.get();
+                }).toList();
+        AtomicReference<BufferedImage> finalImage = new AtomicReference<>(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+        lines.stream()
+                .forEach(bufferedImage -> finalImage.set(joinBufferedImageLines(finalImage.get(), bufferedImage)));
+        File result = new File("src/main/resources/joined.png");
+        try {
+            ImageIO.write(finalImage.get(), "png",result);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        return result;
+    }
+    public static BufferedImage joinBufferedImage(BufferedImage img1,
+                                                  BufferedImage img2) {
+        int offset = 0;
+        int width = img1.getWidth() + img2.getWidth() + offset;
+        int height = Math.max(img1.getHeight(), img2.getHeight()) + offset;
+        BufferedImage newImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+        Color oldColor = g2.getColor();
+        g2.setPaint(Color.BLACK);
+        g2.fillRect(0, 0, width, height);
+        g2.setColor(oldColor);
+        g2.drawImage(img1, null, 0, 0);
+        g2.drawImage(img2, null, img1.getWidth() + offset, 0);
+        g2.dispose();
+        return newImage;
+    }
+    public static BufferedImage joinBufferedImageLines(BufferedImage img1,
+                                                  BufferedImage img2) {
+        int offset = 0;
+        int width = Math.max(img1.getWidth(), img2.getWidth()) + offset;
+        int height = img1.getHeight()+ img2.getHeight() + offset;
+        BufferedImage newImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = newImage.createGraphics();
+        Color oldColor = g2.getColor();
+        g2.setPaint(Color.BLACK);
+        g2.fillRect(0, 0, width, height);
+        g2.setColor(oldColor);
+        g2.drawImage(img1, null, 0, 0);
+        g2.drawImage(img2, null, 0, img1.getHeight()+offset);
+        g2.dispose();
+        return newImage;
     }
 }
