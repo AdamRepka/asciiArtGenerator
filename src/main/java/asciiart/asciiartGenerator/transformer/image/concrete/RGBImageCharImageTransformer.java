@@ -13,12 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.stream.Collectors;
 
 public class RGBImageCharImageTransformer implements ImageTransformer<RGBImage, CharImage> {
-    @Autowired
-    private RGBToGreyScaleMapper rgbToGreyScaleMapper;
-    @Autowired
-    private GreyScaleToCharMapper greyScaleToCharMapper;
-    @Autowired
-    private CharToImageNameMapper charToImageNameMapper;
+    RGBToGreyScaleMapper rgbToGreyScaleMapper = new RGBToGreyScaleMapper();
+    GreyScaleToCharMapper greyScaleToCharMapper = new GreyScaleToCharMapper();
+    CharToImageNameMapper charToImageNameMapper = new CharToImageNameMapper();
 
     @Override
     public CharImage transform(RGBImage rgbImage) {

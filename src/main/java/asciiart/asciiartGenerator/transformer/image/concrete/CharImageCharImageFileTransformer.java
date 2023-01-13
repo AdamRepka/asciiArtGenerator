@@ -17,8 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class CharImageCharImageFileTransformer implements ImageTransformer<CharImage, JpegImage> {
-    @Autowired
-    CharToImageNameMapper imageNameMapper;
+    CharToImageNameMapper imageNameMapper = new CharToImageNameMapper();
     private final FontSize fontSize;
 
     public CharImageCharImageFileTransformer(FontSize fontSize) {
@@ -31,9 +30,9 @@ public class CharImageCharImageFileTransformer implements ImageTransformer<CharI
         List<String> lines = image.charPixelGrid().charPixels().stream()
                 .map(line -> {
                     List<String> imagePaths = line.stream()
-                            .map(charPixel -> imageNameMapper.getImageName(charPixel.value())+".png")
+                            .map(charPixel -> "C:\\Users\\arepka\\Desktop\\personal\\projekty\\asciiArtGenerator\\src\\main\\resources\\"+imageNameMapper.getImageName(charPixel.value())+".png")
                             .toList();
-                    String outputPath = "output-horizontal"+i.getAndIncrement()+"png";
+                    String outputPath = "output-horizontal"+i.getAndIncrement()+".png";
                     String tempFilePath = "temp.png";
 
 // Get resulting image size
