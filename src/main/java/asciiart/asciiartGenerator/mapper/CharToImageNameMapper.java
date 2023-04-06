@@ -59,7 +59,7 @@ public class CharToImageNameMapper {
         map.put('[', "left_sharp_bracket");
         map.put('1', "one");
         map.put('?', "question_mark");
-        map.put('-', "mark");
+        map.put('-', "minus");
         map.put('_', "underscore");
         map.put('+', "plus");
         map.put('~', "tilda");
