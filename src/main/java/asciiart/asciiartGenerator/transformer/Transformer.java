@@ -1,5 +1,6 @@
 package asciiart.asciiartGenerator.transformer;
 
 public interface Transformer<T, K> {
-    K transform(T object);
+    K transformA(T object);
+    T transformB(K object);
 }

@@ -1,0 +1,151 @@
+package asciiart.asciiartGenerator.mapper;
+
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeMap;
+import com.google.common.collect.TreeRangeMap;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
+public class GreyScaleCharMapper {
+    private final RangeMap<Double, Character> charMap;
+    private final Map<Character, Double> greyScaleMap = new HashMap<>();
+
+    public GreyScaleCharMapper() {
+        charMap = TreeRangeMap.create();
+        charMap.put(Range.open(252.0,256.0), ' ');
+        charMap.put(Range.closed(248.0,252.0),'.');
+        charMap.put(Range.closedOpen(244.0,248.0),'\'');
+        charMap.put(Range.closedOpen(240.0,244.0),'`');
+        charMap.put(Range.closedOpen(236.0,240.0),'^');
+        charMap.put(Range.closedOpen(232.0,236.0),'\"');
+        charMap.put(Range.closedOpen(228.0,232.0),',');
+        charMap.put(Range.closedOpen(224.0,228.0),':');
+        charMap.put(Range.closedOpen(220.0,224.0),';');
+        charMap.put(Range.closedOpen(216.0,220.0),'>');
+        charMap.put(Range.closedOpen(212.0,216.0),'<');
+        charMap.put(Range.closedOpen(208.0,212.0),'~');
+        charMap.put(Range.closedOpen(204.0,208.0),'+');
+        charMap.put(Range.closedOpen(200.0,204.0),'_');
+        charMap.put(Range.closedOpen(196.0,200.0),'-');
+        charMap.put(Range.closedOpen(192.0,196.0),'?');
+        charMap.put(Range.closedOpen(188.0,192.0),'[');
+        charMap.put(Range.closedOpen(184.0,188.0),'{');
+        charMap.put(Range.closedOpen(180.0,184.0),'(');
+        charMap.put(Range.closedOpen(176.0,180.0),'l');
+        charMap.put(Range.closedOpen(172.0,176.0),'|');
+        charMap.put(Range.closedOpen(168.0,172.0),'\\');
+        charMap.put(Range.closedOpen(164.0,168.0),'/');
+        charMap.put(Range.closedOpen(160.0,164.0),'t');
+        charMap.put(Range.closedOpen(156.0,160.0),'f');
+        charMap.put(Range.closedOpen(152.0,156.0),'j');
+        charMap.put(Range.closedOpen(148.0,152.0),'r');
+        charMap.put(Range.closedOpen(144.0,148.0),'x');
+        charMap.put(Range.closedOpen(140.0,144.0),'n');
+        charMap.put(Range.closedOpen(136.0,140.0),'u');
+        charMap.put(Range.closedOpen(132.0,136.0),'v');
+        charMap.put(Range.closedOpen(128.0,132.0),'c');
+        charMap.put(Range.closedOpen(124.0,128.0),'z');
+        charMap.put(Range.closedOpen(120.0,124.0),'X');
+        charMap.put(Range.closedOpen(116.0,120.0),'Y');
+        charMap.put(Range.closedOpen(112.0,116.0),'U');
+        charMap.put(Range.closedOpen(108.0,112.0),'J');
+        charMap.put(Range.closedOpen(104.0,108.0),'C');
+        charMap.put(Range.closedOpen(100.0,104.0),'L');
+        charMap.put(Range.closedOpen(96.0,100.0),'Q');
+        charMap.put(Range.closedOpen(92.0,96.0),'0');
+        charMap.put(Range.closedOpen(88.0,92.0),'O');
+        charMap.put(Range.closedOpen(84.0,88.0),'Z');
+        charMap.put(Range.closedOpen(80.0,84.0),'m');
+        charMap.put(Range.closedOpen(76.0,80.0),'w');
+        charMap.put(Range.closedOpen(72.0,76.0),'q');
+        charMap.put(Range.closedOpen(68.0,72.0),'p');
+        charMap.put(Range.closedOpen(64.0,68.0),'d');
+        charMap.put(Range.closedOpen(60.0,64.0),'b');
+        charMap.put(Range.closedOpen(56.0,60.0),'k');
+        charMap.put(Range.closedOpen(52.0,56.0),'h');
+        charMap.put(Range.closedOpen(48.0,52.0),'a');
+        charMap.put(Range.closedOpen(44.0,48.0),'o');
+        charMap.put(Range.closedOpen(40.0,44.0),'*');
+        charMap.put(Range.closedOpen(36.0,40.0),'#');
+        charMap.put(Range.closedOpen(32.0,36.0),'M');
+        charMap.put(Range.closedOpen(28.0,32.0),'W');
+        charMap.put(Range.closedOpen(24.0,28.0),'&');
+        charMap.put(Range.closedOpen(20.0,24.0),'8');
+        charMap.put(Range.closedOpen(16.0,20.0),'%');
+        charMap.put(Range.closedOpen(12.0,16.0),'B');
+        charMap.put(Range.closedOpen(8.0,12.0),'@');
+        charMap.put(Range.closedOpen(0.0,8.0),'$');
+
+        greyScaleMap.put(' ', 253.0);
+        greyScaleMap.put('.', 248.0);
+        greyScaleMap.put('\'',244.0);
+        greyScaleMap.put('`',240.0);
+        greyScaleMap.put('^',236.0);
+        greyScaleMap.put('\"',232.0);
+        greyScaleMap.put(',',228.0);
+        greyScaleMap.put(':',224.0);
+        greyScaleMap.put(';',220.0);
+        greyScaleMap.put('>',216.0);
+        greyScaleMap.put('<',212.0);
+        greyScaleMap.put('~',208.0);
+        greyScaleMap.put('+',204.0);
+        greyScaleMap.put('_',200.0);
+        greyScaleMap.put('-',196.0);
+        greyScaleMap.put('?',192.0);
+        greyScaleMap.put('[',188.0);
+        greyScaleMap.put('{',184.0);
+        greyScaleMap.put('(',180.0);
+        greyScaleMap.put('l',176.0);
+        greyScaleMap.put('|',172.0);
+        greyScaleMap.put('\\',168.0);
+        greyScaleMap.put('/',164.0);
+        greyScaleMap.put('t',160.0);
+        greyScaleMap.put('f',156.0);
+        greyScaleMap.put('j',152.0);
+        greyScaleMap.put('r',148.0);
+        greyScaleMap.put('x',144.0);
+        greyScaleMap.put('n',140.0);
+        greyScaleMap.put('u',136.0);
+        greyScaleMap.put('v',132.0);
+        greyScaleMap.put('c',128.0);
+        greyScaleMap.put('z',124.0);
+        greyScaleMap.put('X',120.0);
+        greyScaleMap.put('Y',116.0);
+        greyScaleMap.put('U',112.0);
+        greyScaleMap.put('J',108.0);
+        greyScaleMap.put('C',104.0);
+        greyScaleMap.put('L',100.0);
+        greyScaleMap.put('Q',96.0);
+        greyScaleMap.put('0',92.0);
+        greyScaleMap.put('O',88.0);
+        greyScaleMap.put('Z',84.0);
+        greyScaleMap.put('m',80.0);
+        greyScaleMap.put('w',76.0);
+        greyScaleMap.put('q',72.0);
+        greyScaleMap.put('p',68.0);
+        greyScaleMap.put('d',64.0);
+        greyScaleMap.put('b',60.0);
+        greyScaleMap.put('k',56.0);
+        greyScaleMap.put('h',52.0);
+        greyScaleMap.put('a',48.0);
+        greyScaleMap.put('o',44.0);
+        greyScaleMap.put('*',40.0);
+        greyScaleMap.put('#',36.0);
+        greyScaleMap.put('M',32.0);
+        greyScaleMap.put('W',28.0);
+        greyScaleMap.put('&',24.0);
+        greyScaleMap.put('8',20.0);
+        greyScaleMap.put('%',16.0);
+        greyScaleMap.put('B',12.0);
+        greyScaleMap.put('@',8.0);
+        greyScaleMap.put('$',0.0);
+    }
+
+    public Character getCharacter(double key) {
+        return charMap.get(key);
+    }
+    public Double getGreyScaleValue(char value) {return greyScaleMap.get(value);}
+}
